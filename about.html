@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<title>School Event Scheduler</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+<!--
+
+Template 2073 Decoration
+
+http://www.tooplate.com/view/2073-decoration
+
+-->
+<link href="tooplate_style.css" rel="stylesheet" type="text/css" />
+
+<script language="javascript" type="text/javascript">
+function clearText(field)
+{
+    if (field.defaultValue == field.value) field.value = '';
+    else if (field.value == '') field.value = field.defaultValue;
+}
+</script>
+<script>
+   
+  $(document).ready(function() {
+   var calendar = $('#calendar').fullCalendar({
+    editable:true,
+    header:{
+     left:'prev,next today',
+     center:'title',
+     right:'month,agendaWeek,agendaDay'
+    },
+    events: 'load.php',
+    selectable:true,
+    selectHelper:true,
+    select: function(start, end, allDay)
+    {
+     var title = prompt("Enter Event Title");
+     if(title)
+     {
+      var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
+      var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
+      $.ajax({
+       url:"insert.php",
+       type:"POST",
+       data:{title:title, start:start, end:end},
+       success:function()
+       {
+        calendar.fullCalendar('refetchEvents');
+        alert("Added Successfully");
+       }
+      })
+     }
+    },
+    editable:true,
+    eventResize:function(event)
+    {
+     var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+     var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+     var title = event.title;
+     var id = event.id;
+     $.ajax({
+      url:"update.php",
+      type:"POST",
+      data:{title:title, start:start, end:end, id:id},
+      success:function(){
+       calendar.fullCalendar('refetchEvents');
+       alert('Event Update');
+      }
+     })
+    },
+
+    eventDrop:function(event)
+    {
+     var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+     var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+     var title = event.title;
+     var id = event.id;
+     $.ajax({
+      url:"update.php",
+      type:"POST",
+      data:{title:title, start:start, end:end, id:id},
+      success:function()
+      {
+       calendar.fullCalendar('refetchEvents');
+       alert("Event Updated");
+      }
+     });
+    },
+
+    eventClick:function(event)
+    {
+     if(confirm("Are you sure you want to remove it?"))
+     {
+      var id = event.id;
+      $.ajax({
+       url:"delete.php",
+       type:"POST",
+       data:{id:id},
+       success:function()
+       {
+        calendar.fullCalendar('refetchEvents');
+        alert("Event Removed");
+       }
+      })
+     }
+    },
+
+   });
+  });
+   
+  </script>
+  <style >
+      div.box{
+        background:#fff ;
+      }
+  </style>
+</head>
+<body>
+
+<div id="tooplate_wrapper">
+	<div id="tooplate_top">
+        <div id="tooplate_menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Design</a></li>
+                <li><a href="#">Portfolio</a></li>
+                <li><a href="#" class="current">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>    	
+        </div> <!-- end of tooplate_menu -->
+        <div id="login_box">
+            <form action="#" method="get">
+                <input type="text" value="Username" name="q" size="10" class="login_field" title="username" onfocus="clearText(this)" onblur="clearText(this)" />
+                <input type="text" value="Password" name="q" size="10" class="login_field" title="password" onfocus="clearText(this)" onblur="clearText(this)" />
+                <input type="submit" name="Login" value="" id="login_btn" title="Login" />
+            </form>
+        </div>
+	</div> <!-- end of tooplate_top -->
+    
+    <div id="tooplate_header">
+    	<div id="site_title">
+        	<h1><a href="#">Decoration</a></h1>
+        </div>
+    </div> <!-- end of tooplate_header -->
+    
+    <div id="tooplate_main_top"></div>
+    <div id="tooplate_main">
+    	<div class="container">
+    <div class="box">
+         
+    
+    <h2 align="center"><a href="#">School Event Scheduler</a></h2>
+   <div id="calendar"></div>
+  
+    </div>
+    <div id="tooplate_main_bottom"></div>
+    
+    <div id="tooplate_footer">
+        
+        Copyright © 2048 <a href="#">Your Company Name</a> 
+        - Design: <a href="http://www.tooplate.com" target="_parent">Tooplate</a>
+    
+    </div> <!-- end of tooplate_footer -->
+    
+</div> <!-- end of wrapper -->
+
+</body>
+</html>
